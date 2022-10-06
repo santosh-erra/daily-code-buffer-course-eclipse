@@ -1,23 +1,27 @@
 package com.dailycodebuffer.orderservice.service.impl;
 
-import com.dailycodebuffer.orderservice.dao.OrderRepository;
-import com.dailycodebuffer.orderservice.dto.OrderDTO;
-import com.dailycodebuffer.orderservice.entity.Order;
-import com.dailycodebuffer.orderservice.mapper.OrderMapper;
-import com.dailycodebuffer.orderservice.service.OrderService;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+import com.dailycodebuffer.orderservice.dao.OrderRepository;
+import com.dailycodebuffer.orderservice.entity.Order;
+import com.dailycodebuffer.orderservice.internal.service.ProductService;
+import com.dailycodebuffer.orderservice.service.OrderService;
 
 @Service
 @Transactional
 public class OrderServiceImpl implements OrderService {
     private final OrderRepository repository;
+    
+    @Autowired
+    private ProductService  productService;
 
     public OrderServiceImpl(OrderRepository repository) {
         this.repository = repository;
@@ -25,9 +29,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order save(Order entity) {
-    	//Order service - save order with orderStatus as created
-    	//product service - block products (reduce the quantity)
-    	//payment service -  if payment  is success ->complete else order service order status failed
         return repository.save(entity);
     }
 
@@ -66,4 +67,15 @@ public class OrderServiceImpl implements OrderService {
         }
         return null;
     }
+
+    @Override
+    public Order placeOrder(Order entity) {
+    	//Order service - save order with orderStatus as created
+    	//product service - block products (reduce the quantity)
+    	//payment service -  if payment  is success ->complete else order service order status failed
+    	
+    	productService.reduceQuantity(entity.getProductId(), entity.getQuantity());
+        return repository.save(entity);
+    }
+
 }

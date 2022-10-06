@@ -69,4 +69,11 @@ public class OrderControllerImpl/* implements OrderController */{
         Order order = orderMapper.asEntity(orderDTO);
         return orderMapper.asDTO(orderService.update(order, id));
     }
+    
+    @PostMapping("/place-order")
+    @ResponseStatus(HttpStatus.CREATED)
+    public OrderDTO placeOrder(@RequestBody OrderDTO orderDTO) {
+        Order order = orderMapper.asEntity(orderDTO);
+        return orderMapper.asDTO(orderService.placeOrder(order));
+    }
 }
