@@ -25,6 +25,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order save(Order entity) {
+    	//Order service - save order with orderStatus as created
+    	//product service - block products (reduce the quantity)
+    	//payment service -  if payment  is success ->complete else order service order status failed
         return repository.save(entity);
     }
 
